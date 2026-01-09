@@ -1,89 +1,58 @@
-# Q 132: Use Finally Block for Resource Cleanup
-# Write a function open_and_close_file(filename) that opens a file, performs some read/write operations, and ensures that the file is closed properly in the finally block, even if an exception occurs during the operations.
+def file_manager():
+    file = None
+    try:
+        choice = input("Do you want to create a new file? (yes/no): ").lower()
 
-def open_and_close_file(filename):
-    f = None  
-    try:    
-        menu = """
-                you want write a file click (1)
-                you want read  a file click (2)
-               """
-        print(menu)
-        choice = int(input("Enter your choice (1/2): "))
-
-        if choice == 1:
-            f = open(filename, "w") 
-            f.write(input("file me likhiye : "))
-            print("✅ Data likh diya gaya hai!")
-        elif choice == 2:
-            f = open(filename, "r") 
-            print(f"📄 Content: {f.read()}")
+        if choice == 'yes':
+            filename = input("Enter new file name: ")
+            if not filename.endswith(".txt"):
+                filename += ".txt"
+            file = open(filename, "w+")
+            print(f"🆕 New file '{filename}' created successfully!")
+        elif choice == 'no':
+            filename = "default.txt"
+            file = open(filename, "a+")
+            print(f"📂 Default file '{filename}' opened successfully!")
         else:
-            print("❌ Out of range sorry ...!!")
+            raise ValueError("Only 'yes' or 'no' is allowed")
+
+        menu = """
+        (1) Write to file
+        (2) Read file
+        """
+        print(menu)
+
+        option = input("Enter your choice (1/2): ")
+
+        if option == '1':
+            data = input("Enter text to write into the file: ")
+            file.write(data + "\n")
+            print("✅ Data written successfully!")
+        elif option == '2':
+            file.seek(0)
+            print("📄 File Content:\n")
+            print(file.read())
+        else:
+            raise ValueError("Invalid menu option selected")
 
     except FileNotFoundError:
-        print("❌ File nhi mill rahi...")
-    except ValueError:
-        print("❌ Please number daaliye (1 ya 2)...")
+        print("❌ Error: File not found.")
+
+    except PermissionError:
+        print("❌ Error: You do not have permission to access this file.")
+
+    except ValueError as ve:
+        print(f"❌ Input Error: {ve}")
+
+    except IOError:
+        print("❌ Error: File input/output operation failed.")
+
     except Exception as e:
-        print(f"❌ Kuch galat hua: {e}")
+        print(f"❌ Unexpected Error: {e}")
 
     finally:
-        # Ye block hamesha chalega!
-        if f is not None:
-            f.close()
-            print("🔒 Safe Cleanup: File ko band kar diya gaya hai.")   
-        else:
-            print("⚠️ Cleanup: File khuli hi nahi thi.")
+        if file:
+            file.close()
+            print("🔒 File closed safely.")
 
-filename = "132.txt"
-open_and_close_file(filename)
-
-
-
-# def open_and_close_file():
-#     f = None  
-#     try:
-#         ask = input("Kya aap ek nayi file banana chahte hain? (yes/no): ").lower()
-        
-#         if ask == 'yes':
-#             # Agar yes hai toh naam poocho
-#             name = input("Nayi file ka naam kya rakhen? : ")
-#             if not name.endswith(".txt"):
-#                 name += ".txt"
-#             filename = name # Naya naam set kiya
-#             f = open(filename, "w+") 
-#             print(f"🆕 Nayi file '{filename}' ban gayi hai!")
-#         else:
-#             # Agar no hai toh bina pooche ye naam fix kar do
-#             filename = "132.txt" 
-#             f = open(filename, "a+") 
-#             print(f"📂 Default file '{filename}' open ho gayi!")
-
-#         # Menu Logic (Dhyan rahe ye if-else ke bahar hai taaki dono ke liye chale)
-#         menu = """
-#                 (1) Write (Likhna)
-#                 (2) Read (Padhna)
-#                """
-#         print(menu)
-#         choice = input("Enter choice (1/2): ") # Int hata diya taaki crash na ho
-
-#         if choice == '1':
-#             data = input("File me kya likhna hai? : ")
-#             f.write(data + "\n")
-#             print("✅ Data save ho gaya!")
-#         elif choice == '2':
-#             f.seek(0)
-#             print(f"📄 Content:\n{f.read()}")
-#         else:
-#             print("❌ Galat choice!")
-
-#     except Exception as e:
-#         print(f"❌ Error: {e}")
-
-#     finally:
-#         if f is not None:
-#             f.close()
-#             print("🔒 Safe Cleanup: File closed.")
-
-# open_and_close_file()
+file_manager()
